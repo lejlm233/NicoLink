@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 分享缓存目录（导出图、临时图）-->
+    <cache-path name="cache" path="." />
+    <!-- 分享 App 外部专属目录（Pictures/NicoLink 原图 + NicoLink/exports）-->
+    <external-files-path name="external_files" path="." />
+</paths>

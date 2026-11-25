@@ -1,0 +1,41 @@
+# 本地 SDK 路径（每台机器不同，必须排除）
+local.properties
+
+# Gradle / Kotlin 构建缓存
+.gradle/
+.kotlin/
+**/build/
+**/.cxx/
+**/.externalNativeBuild/
+
+# 调试日志（排查时生成，不入库）
+*.log
+logcat_crash.txt
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# 系统
+.DS_Store
+Thumbs.db
+captures/
+
+# 签名密钥（绝不能进开源仓库）
+signing/
+*.jks
+*.keystore
+
+# 正式发布包（体积大，不入库；通过 GitHub Release 附件分发）
+releases/
+
+# 本地 AI 工具会话目录
+.openchamber/
+
+# 注意：
+# - androidApp/src/main/jniLibs/ 下的 .so 与 assets/spektralab/resources/ 资源
+#   必须入库，否则其他设备无法编译/运行显影功能。
+
+.workbuddy/

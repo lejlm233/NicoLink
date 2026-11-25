@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 透明状态栏/导航栏，配合 Compose 侧 enableEdgeToEdge -->
+    <style name="Theme.NicoLink" parent="android:style/Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/nicolink_bg</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>
