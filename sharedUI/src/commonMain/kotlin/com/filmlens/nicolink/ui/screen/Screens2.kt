@@ -2372,7 +2372,7 @@ fun SettingsScreen(
     accountVersion: Int = 0,
     onOpenUserCenter: () -> Unit = {},
     onNeedLogin: () -> Unit = {},
-    /** 点击「软件版本号」——手动检查更新（不受主页静默检查的节流限制）；长按 5 秒仍进调试页 */
+    /** 点击「检查更新」——手动检查更新（不受主页静默检查的节流限制）；长按 5 秒仍进调试页 */
     onCheckUpdate: () -> Unit = {},
 ) {
     val colors = LocalLazyFilmColors.current
@@ -2617,6 +2617,7 @@ fun SettingsScreen(
                         @Suppress("DEPRECATION")
                         pkgInfo?.versionName ?: ""
                     }
+                    val checkUpdateLabel = "检查更新" // 该行显示文字；短按检查更新、长按进调试页
                     val aboutRows: List<Triple<String, String, () -> Unit>> = listOf(
                         Triple("懒胶片", "", {
                             runCatching { uriHandler.openUri("https://takeoneai.cn/lazyfilm/") }
@@ -2643,13 +2644,13 @@ fun SettingsScreen(
                             runCatching { uriHandler.openUri("https://takeoneai.cn/nicolink/privacy.html") }
                             Unit
                         }),
-                        Triple("软件版本号", if (versionName.isNotBlank()) "v$versionName" else "v0.1.0", { onCheckUpdate() }),
+                        Triple(checkUpdateLabel, if (versionName.isNotBlank()) "v$versionName" else "v0.1.0", { onCheckUpdate() }),
                     )
                     aboutRows.forEachIndexed { index, (title, subtitle, action) ->
                         if (index > 0) {
                             androidx.compose.material3.HorizontalDivider(color = colors.bgDivider)
                         }
-                        val isVersionRow = title == "软件版本号"
+                        val isVersionRow = title == checkUpdateLabel
                         Row(
                             modifier = Modifier.fillMaxWidth()
                                 .then(
@@ -2680,7 +2681,7 @@ fun SettingsScreen(
                                     Text(subtitle, color = colors.textTertiary, fontSize = 11.sp)
                                 }
                             }
-                            if (title != "软件版本号") {
+                            if (title != checkUpdateLabel) {
                                 Icon(AppIcons.ChevronRight, contentDescription = null,
                                     tint = colors.iconSecondary, modifier = Modifier.size(18.dp))
                             }
