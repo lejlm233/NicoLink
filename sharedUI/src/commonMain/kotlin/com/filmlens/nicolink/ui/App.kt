@@ -218,6 +218,8 @@ fun App(
             val nav = rememberAppNav()
             // ── 账号 + 热力图（NicoLink 独立空间，与 lazyfilm 完全隔离）──
             val context = LocalContext.current
+            // 测试版（Canary）注入 mock 数据：账号/相机陈列架/热力图；正式版不执行
+            com.filmlens.nicolink.data.MockData.injectIfCanary(context)
             val accountRepo = remember { AccountRepository(context) }
             val heatmapManager = remember { HeatmapManager(context) }
             var showLogin by remember { mutableStateOf(false) }

@@ -93,6 +93,8 @@ class AccountRepository(private val context: Context) {
      * 启动静默续期：checkToken 通过且临近过期时云端换发 newToken。所有失败均静默。
      */
     suspend fun renewTokenIfNeeded() {
+        // 测试版（Canary）的 mock 账号不走云端校验，否则假 token 会被 checkToken 判定失效并清空
+        if (com.filmlens.nicolink.data.MockData.useMockAccount(context)) return
         val current = token ?: return
         try {
             val res = ApiClient.post(context, "${ApiClient.AUTH}/checkToken", "{}", token = current)
@@ -229,7 +231,9 @@ class AccountRepository(private val context: Context) {
      * 热力图同步：推送未同步增量 → 返回云端近 400 天全量（含其他设备）。
      * 未登录/失败时返回 null，由调用方保留本地增量待下次。
      */
-    suspend fun syncHeatmap(days: Map<String, Int>): HeatmapSyncResponse? = try {
+    suspend fun syncHeatmap(days: Map<String, Int>): HeatmapSyncResponse? {
+        if (com.filmlens.nicolink.data.MockData.useMockAccount(context)) return null
+        return try {
         val current = token ?: return null
         ApiClient.post(
             context,
@@ -238,25 +242,29 @@ class AccountRepository(private val context: Context) {
             token = current,
         ).getOrThrow().let { ApiClient.json.decodeFromString<HeatmapSyncResponse>(it) }
             .takeIf { it.errCode == 0 }
-    } catch (_: Exception) {
-        null
+        } catch (_: Exception) {
+            null
+        }
     }
 
     /**
      * 同步相机收藏：上报本机已连接的相机（云端 upsert），返回该用户全量收藏。
      * 收藏性质——只记录"用过什么设备"，与本机连接配置无关。未登录返回 null。
      */
-    suspend fun syncCameras(cameras: List<SavedCameraDto>): List<SavedCameraDto>? = try {
-        val current = token ?: return null
-        ApiClient.post(
-            context,
-            "${ApiClient.AUTH}/syncCameras",
-            ApiClient.json.encodeToString(CameraSyncRequest(cameras)),
-            token = current,
-        ).getOrThrow().let { ApiClient.json.decodeFromString<CameraSyncResponse>(it) }
-            .takeIf { it.errCode == 0 }?.cameras
-    } catch (_: Exception) {
-        null
+    suspend fun syncCameras(cameras: List<SavedCameraDto>): List<SavedCameraDto>? {
+        if (com.filmlens.nicolink.data.MockData.useMockAccount(context)) return null
+        return try {
+            val current = token ?: return null
+            ApiClient.post(
+                context,
+                "${ApiClient.AUTH}/syncCameras",
+                ApiClient.json.encodeToString(CameraSyncRequest(cameras)),
+                token = current,
+            ).getOrThrow().let { ApiClient.json.decodeFromString<CameraSyncResponse>(it) }
+                .takeIf { it.errCode == 0 }?.cameras
+        } catch (_: Exception) {
+            null
+        }
     }
 
     /** 移除一条相机收藏（仅云端记录，不动本机 CameraStore 连接配置）。serial 优先作身份键 */
